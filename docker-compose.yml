@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
+    environment:
+      - POSTGRES_USER=sensor_user
+      - POSTGRES_PASSWORD=sensor_password
+      - POSTGRES_DB=sensor_data
+    ports:
+      - "5432:5432"
+    volumes:
+      - tsdb-data:/var/lib/postgresql/data
+      - ./timescaledb/initdb:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - timescaledb
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    restart: unless-stopped
+
+  fetcher:
+    build: ./fetcher
+    container_name: sensor-fetcher
+    depends_on:
+      - timescaledb
+    environment:
+      - DB_HOST=timescaledb
+      - DB_PORT=5432
+      - DB_NAME=sensor_data
+      - DB_USER=sensor_user
+      - DB_PASSWORD=sensor_password
+      # Comma-separated list of sensor IDs to poll
+      - SENSOR_IDS=sensor1,sensor2,sensor3
+      # Interval in seconds (default 300 = 5 minutes)
+      - FETCH_INTERVAL_SECONDS=300
+    restart: unless-stopped
+
+volumes:
+  tsdb-data:
