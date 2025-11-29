@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 CREATE TABLE IF NOT EXISTS measurements (
     time      TIMESTAMPTZ      NOT NULL,
     sensor_id TEXT             NOT NULL,
-    t1        DOUBLE PRECISION NOT NULL,
+    t1        DOUBLE PRECISION NULL,
     t2        DOUBLE PRECISION NULL
 );
 
