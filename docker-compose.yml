@@ -27,6 +27,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
     restart: unless-stopped
 
   fetcher:
@@ -48,3 +49,4 @@ services:
 
 volumes:
   tsdb-data:
+  grafana-data:
