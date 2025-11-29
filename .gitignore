@@ -1,0 +1,9 @@
+# Ignore everything in backups directory
+backups/*
+# Except the .gitkeep file
+!backups/.gitkeep
+
+# Ignore everything in exports directory
+exports/*
+# Except the .gitkeep file
+!exports/.gitkeep
