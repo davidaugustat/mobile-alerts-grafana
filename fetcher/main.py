@@ -79,6 +79,7 @@ def insert_into_db(
     sql = """
         INSERT INTO measurements (time, sensor_id, t1, t2)
         VALUES (%s, %s, %s, %s)
+        ON CONFLICT (sensor_id, time) DO NOTHING
     """
 
     try:

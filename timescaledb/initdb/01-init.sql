@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS measurements (
 -- Convert to hypertable on the time column
 SELECT create_hypertable('measurements', 'time', if_not_exists => TRUE);
 
--- Helpful index for querying by sensor and time
-CREATE INDEX IF NOT EXISTS idx_measurements_sensor_time
+-- Single unique index to enforce no duplicates and support queries
+CREATE UNIQUE INDEX IF NOT EXISTS idx_measurements_sensor_time
     ON measurements (sensor_id, time DESC);
