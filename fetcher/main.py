@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime, timezone
 from typing import List, Optional
+import requests
 
 import psycopg2
 from psycopg2 import OperationalError, InterfaceError
@@ -20,6 +21,9 @@ DB_USER = os.getenv("DB_USER", "sensor_user")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "sensor_password")
 
 FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", "300"))
+
+# API documentation: https://mobile-alerts.eu/info/public_server_api_documentation.pdf
+API_URL = "https://www.data199.com/api/pv1/device/lastmeasurement"
 
 # Comma-separated list of sensor IDs, e.g. "sensor1,sensor2"
 SENSOR_IDS_ENV = os.getenv("SENSOR_IDS", "")
@@ -97,35 +101,80 @@ def insert_into_db(
             cur.execute(sql, (timestamp, sensor_id, t1, t2))
 
 
+def _fetch_latest_measurements(sensor_ids: List[str]) -> Optional[dict]:
+    """POST once to the Mobile Alerts API asking for the latest measurements.
+
+    Returns parsed JSON dict on success, or None on failure. No retries.
+    """
+    if not sensor_ids:
+        logging.info("No sensor IDs provided – skipping API call.")
+        return None
+
+    post_param = {"deviceids": ",".join(sensor_ids)}
+    try:
+        resp = requests.post(API_URL, data=post_param, timeout=10)
+        if resp.status_code != 200:
+            logging.warning(
+                "API responded with status %d – body: %s",
+                resp.status_code,
+                resp.text[:300],
+            )
+            return None
+        return resp.json()
+    except requests.RequestException as e:
+        logging.warning("Request exception: %s", e)
+        return None
+
+
+def _convert_timestamp(unix_ts: int) -> datetime:
+    """Convert UNIX timestamp (seconds) to timezone-aware UTC datetime."""
+    return datetime.fromtimestamp(unix_ts, tz=timezone.utc)
+
+
 def fetch_data(sensor_ids: List[str]) -> None:
+    """Fetch latest measurements for provided sensor IDs and insert into DB.
+
+    Steps:
+      1. Call API once for all sensor IDs.
+      2. Validate success flag.
+      3. For each device object, derive timestamp, temperatures.
+      4. Insert using insert_into_db.
     """
-    Placeholder function for fetching logic.
+    data = _fetch_latest_measurements(sensor_ids)
+    if not data:
+        logging.error("No data returned from API.")
+        return
 
-    Implement this function yourself. It should:
-      - query your custom HTTP/JSON API for each sensor_id
-      - obtain timestamp, t1, and (optionally) t2
-      - call insert_into_db(timestamp, sensor_id, t1, t2) for each measurement
+    if not data.get("success"):
+        logging.error("API indicated failure: %s", data)
+        return
 
-    Example skeleton:
+    devices = data.get("devices", [])
+    if not devices:
+        logging.warning("API returned success but no devices.")
+        return
 
-        from datetime import datetime, timezone
-        import requests
+    inserted = 0
+    for device in devices:
+        try:
+            dev_id = device.get("deviceid")
+            measurement = device.get("measurement", {})
+            ts_unix = measurement.get("ts")
+            if dev_id is None or ts_unix is None:
+                logging.debug("Skipping device with missing id or timestamp: %s", device)
+                continue
+            timestamp = _convert_timestamp(ts_unix)
+            t1 = measurement.get("t1")
+            t2 = measurement.get("t2")
+            if t1 is None and t2 is None:
+                logging.debug("Skipping device %s – no temperature values", dev_id)
+                continue
+            insert_into_db(timestamp, dev_id, t1, t2)
+            inserted += 1
+        except Exception:
+            logging.exception("Failed processing device object: %s", device)
 
-        def fetch_data(sensor_ids: List[str]) -> None:
-            for sensor_id in sensor_ids:
-                # Call your API, e.g.:
-                # resp = requests.get(f"http://your-api/sensors/{sensor_id}")
-                # data = resp.json()
-                #
-                # timestamp = datetime.fromisoformat(data["time"]).astimezone(timezone.utc)
-                # t1 = float(data["t1"])
-                # t2 = float(data.get("t2")) if "t2" in data else None
-                #
-                # insert_into_db(timestamp, sensor_id, t1, t2)
-                pass
-    """
-    # Placeholder; you will implement this.
-    pass
+    logging.info("Inserted %d measurements (received %d device objects).", inserted, len(devices))
 
 
 def parse_sensor_ids(env_value: str) -> List[str]:
