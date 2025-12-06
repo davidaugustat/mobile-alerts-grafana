@@ -7,3 +7,6 @@ backups/*
 exports/*
 # Except the .gitkeep file
 !exports/.gitkeep
+
+# Ignore environment files
+.env

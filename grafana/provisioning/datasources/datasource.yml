@@ -5,12 +5,12 @@ datasources:
     type: postgres
     access: proxy
     isDefault: true
-    url: timescaledb:5432
-    user: sensor_user
+    url: ${DB_HOST}:${DB_PORT}
+    user: ${DB_USER}
     secureJsonData:
-      password: sensor_password
+      password: ${DB_PASSWORD}
     jsonData:
       sslmode: disable
       postgresVersion: 1600        # Postgres 16
       timescaledb: true
-      database: sensor_data
+      database: ${DB_NAME}

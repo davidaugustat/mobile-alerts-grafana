@@ -2,12 +2,15 @@ services:
   timescaledb:
     image: timescale/timescaledb:latest-pg16
     container_name: timescaledb
+    env_file:
+      - ./.env
     environment:
-      - POSTGRES_USER=sensor_user
-      - POSTGRES_PASSWORD=sensor_password
-      - POSTGRES_DB=sensor_data
+      # Map DB_* from .env to the postgres expected vars
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - tsdb-data:/var/lib/postgresql/data
       - ./timescaledb/initdb:/docker-entrypoint-initdb.d
@@ -18,12 +21,13 @@ services:
     container_name: grafana
     depends_on:
       - timescaledb
+    env_file:
+      - ./.env
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_I18N_DEFAULT_LOCALE=de
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
@@ -35,17 +39,8 @@ services:
     container_name: sensor-fetcher
     depends_on:
       - timescaledb
-    environment:
-      - DB_HOST=timescaledb
-      - DB_PORT=5432
-      - DB_NAME=sensor_data
-      - DB_USER=sensor_user
-      - DB_PASSWORD=sensor_password
-      - API_URL=https://www.data199.com/api/pv1/device/lastmeasurement
-      # Comma-separated list of sensor IDs to poll
-      - SENSOR_IDS=sensor1,sensor2,sensor3
-      # Interval in seconds (default 300 = 5 minutes)
-      - FETCH_INTERVAL_SECONDS=300
+    env_file:
+      - ./.env
     restart: unless-stopped
 
 volumes:
