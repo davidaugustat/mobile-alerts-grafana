@@ -23,7 +23,8 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "sensor_password")
 FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", "300"))
 
 # API documentation: https://mobile-alerts.eu/info/public_server_api_documentation.pdf
-API_URL = "https://www.data199.com/api/pv1/device/lastmeasurement"
+DEFAULT_API_URL = "https://www.data199.com/api/pv1/device/lastmeasurement"
+API_URL = os.getenv("API_URL", DEFAULT_API_URL)
 
 # Comma-separated list of sensor IDs, e.g. "sensor1,sensor2"
 SENSOR_IDS_ENV = os.getenv("SENSOR_IDS", "")
