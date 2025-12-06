@@ -9,6 +9,18 @@ if [ -f ".env" ]; then
   set +a
 fi
 
+# Require necessary env vars
+require_var() {
+  local name="$1"
+  if [ -z "${!name:-}" ]; then
+    echo "Error: Required environment variable '$name' is not set or empty." >&2
+    exit 1
+  fi
+}
+require_var DB_USER
+require_var DB_PASSWORD
+require_var DB_NAME
+
 EXPORT_DIR="./exports"
 mkdir -p "$EXPORT_DIR"
 

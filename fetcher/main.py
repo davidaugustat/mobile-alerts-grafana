@@ -14,11 +14,11 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
-DB_HOST = os.getenv("DB_HOST", "timescaledb")
+DB_HOST = os.getenv("DB_HOST")
 DB_PORT = int(os.getenv("DB_PORT", "5432"))
-DB_NAME = os.getenv("DB_NAME", "sensor_data")
-DB_USER = os.getenv("DB_USER", "sensor_user")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "sensor_password")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", "300"))
 
@@ -185,7 +185,24 @@ def parse_sensor_ids(env_value: str) -> List[str]:
     return [s.strip() for s in env_value.split(",") if s.strip()]
 
 
+def check_env_vars() -> None:
+    """
+    Checks for required environment variables and fails the program if any are missing.
+    """
+    required_vars = {
+        "DB_HOST": DB_HOST,
+        "DB_NAME": DB_NAME,
+        "DB_USER": DB_USER,
+        "DB_PASSWORD": DB_PASSWORD,
+    }
+    missing_vars = [var for var, value in required_vars.items() if not value]
+    if missing_vars:
+        logging.error("Missing required environment variables: %s", ", ".join(missing_vars))
+        raise EnvironmentError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
+
 def main() -> None:
+    check_env_vars()
     sensor_ids = parse_sensor_ids(SENSOR_IDS_ENV)
     if not sensor_ids:
         logging.warning("No SENSOR_IDS configured. No sensors will be polled.")
