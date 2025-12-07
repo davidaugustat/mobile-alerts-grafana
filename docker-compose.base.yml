@@ -5,7 +5,6 @@
 services:
   timescaledb:
     image: timescale/timescaledb:latest-pg16
-    container_name: timescaledb
     env_file:
       - ./.env
     environment:
@@ -22,7 +21,6 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
     depends_on:
       - timescaledb
     env_file:
@@ -42,7 +40,6 @@ services:
 
   fetcher:
     build: ./fetcher
-    container_name: sensor-fetcher
     depends_on:
       - timescaledb
     env_file:
