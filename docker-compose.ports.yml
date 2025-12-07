@@ -1,17 +1,19 @@
+# This docker-compose file sets up the services with direct port mapping for Grafana.
+
 services:
   grafana:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: grafana
     ports:
       - "3000:3000"
 
   timescaledb:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: timescaledb
 
   fetcher:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: fetcher

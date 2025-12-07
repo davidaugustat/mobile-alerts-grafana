@@ -1,7 +1,10 @@
+# This docker-compose file sets up the Grafana Mobile Alerts services with Traefik as a reverse proxy.
+# Traefik must be running separately with a Docker network named `traefik-proxy`.
+
 services:
   grafana:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: grafana
     networks:
       - local
@@ -16,12 +19,12 @@ services:
 
   timescaledb:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: timescaledb
 
   fetcher:
     extends:
-      file: ./docker-compose.yml
+      file: ./docker-compose.base.yml
       service: fetcher
 
 networks:
