@@ -11,10 +11,10 @@ services:
       - traefik-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sensorenr23-grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
-      - "traefik.http.routers.sensorenr23-grafana.entrypoints=websecure"
-      - "traefik.http.routers.sensorenr23-grafana.tls=true"
-      - "traefik.http.routers.sensorenr23-grafana.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${PROJECT_NAME}-grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-grafana.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}-grafana.tls=true"
+      - "traefik.http.routers.${PROJECT_NAME}-grafana.tls.certresolver=letsencrypt"
       - "traefik.docker.network=traefik-proxy"
 
   timescaledb:
