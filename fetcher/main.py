@@ -14,8 +14,8 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = int(os.getenv("DB_PORT", "5432"))
+DB_HOST = "timescaledb"
+DB_PORT = 5432
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
@@ -190,7 +190,6 @@ def check_env_vars() -> None:
     Checks for required environment variables and fails the program if any are missing.
     """
     required_vars = {
-        "DB_HOST": DB_HOST,
         "DB_NAME": DB_NAME,
         "DB_USER": DB_USER,
         "DB_PASSWORD": DB_PASSWORD,

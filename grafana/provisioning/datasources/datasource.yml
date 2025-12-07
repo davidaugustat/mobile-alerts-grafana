@@ -5,7 +5,7 @@ datasources:
     type: postgres
     access: proxy
     isDefault: true
-    url: ${DB_HOST}:${DB_PORT}
+    url: timescaledb:5432
     user: ${DB_USER}
     secureJsonData:
       password: ${DB_PASSWORD}
