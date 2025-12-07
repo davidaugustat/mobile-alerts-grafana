@@ -25,7 +25,6 @@ services:
       - ./.env
     networks:
       - local
-      - traefik-proxy
     expose:
       - 3000
     environment:
@@ -36,14 +35,6 @@ services:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
-    labels:
-      # Configure Traefik for this container:
-      - "traefik.enable=true"
-      - "traefik.http.routers.sensorenr23-grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
-      - "traefik.http.routers.sensorenr23-grafana.entrypoints=websecure"
-      - "traefik.http.routers.sensorenr23-grafana.tls=true"
-      - "traefik.http.routers.sensorenr23-grafana.tls.certresolver=letsencrypt"
-      - "traefik.docker.network=traefik-proxy"
 
   fetcher:
     build: ./fetcher
@@ -62,6 +53,3 @@ volumes:
 
 networks:
   local:
-  # In a separate docker-compose file, Traefik is set up with this network:
-  traefik-proxy:
-    external: true

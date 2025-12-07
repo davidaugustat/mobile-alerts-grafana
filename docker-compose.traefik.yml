@@ -1,0 +1,31 @@
+services:
+  grafana:
+    extends:
+      file: ./docker-compose.yml
+      service: grafana
+    networks:
+      - local
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sensorenr23-grafana.rule=Host(`${GRAFANA_DOMAIN}`)"
+      - "traefik.http.routers.sensorenr23-grafana.entrypoints=websecure"
+      - "traefik.http.routers.sensorenr23-grafana.tls=true"
+      - "traefik.http.routers.sensorenr23-grafana.tls.certresolver=letsencrypt"
+      - "traefik.docker.network=traefik-proxy"
+
+  timescaledb:
+    extends:
+      file: ./docker-compose.yml
+      service: timescaledb
+
+  fetcher:
+    extends:
+      file: ./docker-compose.yml
+      service: fetcher
+
+networks:
+  traefik-proxy:
+    external: true
+  local:
+    external: false

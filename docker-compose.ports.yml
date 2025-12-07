@@ -1,0 +1,17 @@
+services:
+  grafana:
+    extends:
+      file: ./docker-compose.yml
+      service: grafana
+    ports:
+      - "3000:3000"
+
+  timescaledb:
+    extends:
+      file: ./docker-compose.yml
+      service: timescaledb
+
+  fetcher:
+    extends:
+      file: ./docker-compose.yml
+      service: fetcher
