@@ -27,8 +27,11 @@ services:
       file: ./docker-compose.base.yml
       service: fetcher
 
+volumes:
+  tsdb-data:
+  grafana-data:
+
 networks:
   traefik-proxy:
     external: true
   local:
-    external: false
