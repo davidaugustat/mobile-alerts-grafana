@@ -18,6 +18,11 @@ services:
       file: ./docker-compose.base.yml
       service: fetcher
 
+  autoheal:
+    extends:
+      file: ./docker-compose.base.yml
+      service: autoheal
+
 volumes:
   tsdb-data:
   grafana-data:

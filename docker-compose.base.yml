@@ -18,6 +18,8 @@ services:
     restart: unless-stopped
     networks:
       - local
+    labels:
+      - "autoheal=true"
 
   grafana:
     image: grafana/grafana:latest
@@ -37,6 +39,8 @@ services:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
+    labels:
+      - "autoheal=true"
 
   fetcher:
     build: ./fetcher
@@ -45,6 +49,20 @@ services:
     env_file:
       - ./.env
     restart: unless-stopped
+    networks:
+      - local
+    labels:
+      - "autoheal=true"
+
+  # add a lightweight auto-healer that restarts unhealthy labeled containers
+  autoheal:
+    image: willfarrell/docker-autoheal:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - AUTOHEAL_INTERVAL=5m
+      - AUTOHEAL_LABEL_ENABLE=true
     networks:
       - local
 

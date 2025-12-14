@@ -16,6 +16,8 @@ services:
       - "traefik.http.routers.${PROJECT_NAME}-grafana.tls=true"
       - "traefik.http.routers.${PROJECT_NAME}-grafana.tls.certresolver=letsencrypt"
       - "traefik.docker.network=traefik-proxy"
+      # ensure autoheal monitoring remains applied when labels are redefined here
+      - "autoheal=true"
 
   timescaledb:
     extends:
@@ -26,6 +28,11 @@ services:
     extends:
       file: ./docker-compose.base.yml
       service: fetcher
+
+  autoheal:
+    extends:
+      file: ./docker-compose.base.yml
+      service: autoheal
 
 volumes:
   tsdb-data:
