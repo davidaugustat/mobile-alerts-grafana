@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Require docker-compose file as first argument
+if [ $# -lt 1 ] || [ -z "${1:-}" ]; then
+  echo "Usage: $0 <docker-compose-file>" >&2
+  echo "Example: $0 docker-compose.ports.yml" >&2
+  exit 1
+fi
+COMPOSE_FILE="$1"
+shift
+
 # Load environment variables
 if [ -f ".env" ]; then
   set -a
@@ -31,7 +40,7 @@ echo "Creating backup: ${FILENAME}"
 
 # Uses `pg_dump` inside the timescaledb container.
 # Requires Docker Compose v2 (`docker compose`) or adjust to `docker-compose` if needed.
-docker compose exec -T \
+docker compose -f "$COMPOSE_FILE" exec -T \
   -e PGPASSWORD="${DB_PASSWORD}" \
   timescaledb \
   pg_dump \
