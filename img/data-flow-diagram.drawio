@@ -25,14 +25,6 @@
         <mxCell id="TjvHnm4VOZEcF2QvBhyj-14" edge="1" parent="1" source="TjvHnm4VOZEcF2QvBhyj-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.13;entryY=0.77;entryDx=0;entryDy=0;entryPerimeter=0;" target="TjvHnm4VOZEcF2QvBhyj-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TjvHnm4VOZEcF2QvBhyj-11" edge="1" parent="1" source="TjvHnm4VOZEcF2QvBhyj-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.875;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="TjvHnm4VOZEcF2QvBhyj-2">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="TjvHnm4VOZEcF2QvBhyj-17" connectable="0" parent="TjvHnm4VOZEcF2QvBhyj-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="REST API" vertex="1">
-          <mxGeometry relative="1" x="-0.3501" y="3" as="geometry">
-            <mxPoint x="11" y="-7" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="TjvHnm4VOZEcF2QvBhyj-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="This Project&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="100" width="450" x="280" y="340" as="geometry" />
         </mxCell>
@@ -50,6 +42,14 @@
         </mxCell>
         <mxCell id="TjvHnm4VOZEcF2QvBhyj-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Grafana" vertex="1">
           <mxGeometry height="60" width="120" x="600" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="TjvHnm4VOZEcF2QvBhyj-11" edge="1" parent="1" source="TjvHnm4VOZEcF2QvBhyj-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.875;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="TjvHnm4VOZEcF2QvBhyj-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TjvHnm4VOZEcF2QvBhyj-17" connectable="0" parent="TjvHnm4VOZEcF2QvBhyj-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="REST API" vertex="1">
+          <mxGeometry relative="1" x="-0.3501" y="3" as="geometry">
+            <mxPoint x="11" y="-7" as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
