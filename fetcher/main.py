@@ -66,6 +66,7 @@ def insert_into_db(
     sensor_id: str,
     t1: float,
     t2: Optional[float],
+    h: Optional[float] = None,
 ) -> None:
     """
     Insert a single measurement row into the TimescaleDB 'measurements' hypertable.
@@ -74,19 +75,20 @@ def insert_into_db(
     :param sensor_id: ID of the sensor (string)
     :param t1: temperature reading for t1 (float)
     :param t2: temperature reading for t2 (float or None if not available)
+    :param h: humidity reading (float or None if not available)
     """
     global _conn
 
     sql = """
-        INSERT INTO measurements (time, sensor_id, t1, t2)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO measurements (time, sensor_id, t1, t2, h)
+        VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (sensor_id, time) DO NOTHING
     """
 
     try:
         conn = get_db_connection()
         with conn.cursor() as cur:
-            cur.execute(sql, (timestamp, sensor_id, t1, t2))
+            cur.execute(sql, (timestamp, sensor_id, t1, t2, h))
     except (OperationalError, InterfaceError) as e:
         logging.warning("DB connection issue when inserting; retrying once. Error: %s", e)
         # Force reconnection on next call
@@ -100,7 +102,7 @@ def insert_into_db(
         # Retry once
         conn = get_db_connection()
         with conn.cursor() as cur:
-            cur.execute(sql, (timestamp, sensor_id, t1, t2))
+            cur.execute(sql, (timestamp, sensor_id, t1, t2, h))
 
 
 def _fetch_latest_measurements(sensor_ids: List[str]) -> Optional[dict]:
@@ -168,10 +170,11 @@ def fetch_data(sensor_ids: List[str]) -> None:
             timestamp = _convert_timestamp(ts_unix)
             t1 = measurement.get("t1")
             t2 = measurement.get("t2")
-            if t1 is None and t2 is None:
-                logging.debug("Skipping device %s – no temperature values", dev_id)
+            h = measurement.get("h")
+            if t1 is None and t2 is None and h is None:
+                logging.debug("Skipping device %s – no sensor values", dev_id)
                 continue
-            insert_into_db(timestamp, dev_id, t1, t2)
+            insert_into_db(timestamp, dev_id, t1, t2, h)
             inserted += 1
         except Exception:
             logging.exception("Failed processing device object: %s", device)
