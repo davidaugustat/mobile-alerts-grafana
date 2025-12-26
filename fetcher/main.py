@@ -20,7 +20,7 @@ DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", "300"))
+FETCH_INTERVAL_SECONDS = int(os.getenv("FETCH_INTERVAL_SECONDS", "180"))
 
 # API documentation: https://mobile-alerts.eu/info/public_server_api_documentation.pdf
 DEFAULT_API_URL = "https://www.data199.com/api/pv1/device/lastmeasurement"
