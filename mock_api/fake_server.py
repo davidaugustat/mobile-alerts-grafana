@@ -55,43 +55,7 @@ class LastMeasurementHandler(BaseHTTPRequestHandler):
         deviceids_raw = deviceids_param[0]
         device_ids = [d.strip() for d in deviceids_raw.split(",") if d.strip()]
 
-        now = int(time.time())  # current UTC timestamp as int
-
-        devices = []
-        for device_id in device_ids:
-            # Deterministic choice: some devices have only t1, some t1+t2
-            # Here: even last hex digit -> t1 + t2, odd -> only t1
-            has_t2 = False
-            if device_id:
-                last_char = device_id[-1]
-                try:
-                    has_t2 = int(last_char, 16) % 2 == 0
-                except ValueError:
-                    # Fallback if last char isn't hex
-                    has_t2 = False
-
-            # Random temperature values
-            t1 = round(random.uniform(10.0, 30.0), 1)
-            t2 = round(random.uniform(10.0, 30.0), 1) if has_t2 else None
-
-            measurement = {
-                "idx": random.randint(1, 500_000),
-                "ts": now,
-                "c": now,
-                "lb": False,
-                "t1": t1,
-            }
-            if has_t2:
-                measurement["t2"] = t2
-
-            devices.append(
-                {
-                    "deviceid": device_id,
-                    "lastseen": now,
-                    "lowbattery": False,
-                    "measurement": measurement,
-                }
-            )
+        devices = [get_response_for_one_device(device_id) for device_id in device_ids]
 
         response = {
             "devices": devices,
@@ -99,6 +63,45 @@ class LastMeasurementHandler(BaseHTTPRequestHandler):
         }
 
         self._send_json(response, status=200)
+
+
+def get_response_for_one_device(device_id: str) -> dict:
+    now = int(time.time())  # current UTC timestamp as int
+
+    # Deterministic choice:
+    # Divisible by 2 -> has t2
+    # Divisible by 3 -> has h
+    # Otherwise only t1
+    has_t2 = False
+    has_h = False
+    if device_id:
+        try:
+            device_id_int = int(device_id, 16)
+            has_t2 = device_id_int % 2 == 0
+            has_h = device_id_int % 3 == 0
+        except ValueError:
+            has_t2 = False
+            has_h = False
+
+    measurement = {
+        "idx": random.randint(1, 500_000),
+        "ts": now,
+        "c": now,
+        "lb": False,
+        "t1": round(random.uniform(10.0, 30.0), 1),
+    }
+    if has_t2:
+        measurement["t2"] = round(random.uniform(10.0, 30.0), 1)
+    if has_h:
+        measurement["h"] = round(random.uniform(10.0, 90.0))
+
+    result =  {
+            "deviceid": device_id,
+            "lastseen": now,
+            "lowbattery": False,
+            "measurement": measurement,
+        }
+    return result
 
 
 def run(host="0.0.0.0", port=8000):
