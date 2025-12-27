@@ -3,11 +3,16 @@ Example for a Grafana dashboard that can be built using this project
 
 # Mobile Alerts Grafana Dashboard
 This project
-1. Periodically fetches the current temperature from one or multiple [Mobile Alerts](https://mobile-alerts.eu/) temperature sensors.
+1. Periodically fetches the current measurements from one or multiple [Mobile Alerts](https://mobile-alerts.eu/) sensors.
 2. Stores the retrieved values in a TimescaleDB database for **long-term** storage.
 3. Makes the stored measurements available to a Grafana instance.
 
-This project can be used to create a nice Grafana dashboard visualizing temperature data from your smart home.
+This project can be used to create a nice Grafana dashboard visualizing sensor data from your smart home.
+
+Supported types of sensors:
+- Temperature sensors with one or two temperature probes
+- Humidity sensors (also combined temperature and humidity sensors)
+- Rain sensors
 
 Additional features:
 - Compatible with [Traefik](https://traefik.io/traefik) for easy hosting with a domain and HTTPS

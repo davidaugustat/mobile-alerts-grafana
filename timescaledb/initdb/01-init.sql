@@ -5,9 +5,12 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 CREATE TABLE IF NOT EXISTS measurements (
     time      TIMESTAMPTZ      NOT NULL,
     sensor_id TEXT             NOT NULL,
-    t1        DOUBLE PRECISION NULL,
-    t2        DOUBLE PRECISION NULL,
-    h         DOUBLE PRECISION NULL
+    t1        DOUBLE PRECISION NULL,        -- temperature 1 (°C)
+    t2        DOUBLE PRECISION NULL,        -- temperature 2 (°C)
+    h         DOUBLE PRECISION NULL,        -- air humidity (%)
+    r         DOUBLE PRECISION NULL,        -- rainfall (total mm)
+    rf        INTEGER          NULL,        -- rain flip count (number of flips)
+    rr        DOUBLE PRECISION NULL         -- amount of water per flip (mm)
 );
 
 -- Convert to hypertable on the time column
