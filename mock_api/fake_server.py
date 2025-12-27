@@ -7,7 +7,7 @@ from urllib.parse import parse_qs, urlparse
 
 """
 A fake API server that simulates the /api/pv1/device/lastmeasurement endpoint of the Mobile Alerts / data199 service. It responds to POST requests with dummy temperature data for requested device IDs.
-At the moment, only temperature sensor data (t1, t2) is simulated, no humidity or other values.
+At the moment, temperature sensors (t1, t2), humidity (h), and rain sensors (r, rf, rr) are supported.
 
 The official API documentation can be found at:
 https://mobile-alerts.eu/info/public_server_api_documentation.pdf
@@ -71,17 +71,26 @@ def get_response_for_one_device(device_id: str) -> dict:
     # Deterministic choice:
     # Divisible by 2 -> has t2
     # Divisible by 3 -> has h
+    # Divisible by 5 -> is rain sensor
     # Otherwise only t1
     has_t2 = False
     has_h = False
+    is_rain_sensor = False
     if device_id:
         try:
             device_id_int = int(device_id, 16)
             has_t2 = device_id_int % 2 == 0
             has_h = device_id_int % 3 == 0
+            is_rain_sensor = device_id_int % 5 == 0
         except ValueError:
             has_t2 = False
             has_h = False
+            is_rain_sensor = False
+
+    # Rain sensors do not have t2 or h
+    if is_rain_sensor:
+        has_t2 = False 
+        has_h = False
 
     measurement = {
         "idx": random.randint(1, 500_000),
@@ -94,6 +103,12 @@ def get_response_for_one_device(device_id: str) -> dict:
         measurement["t2"] = round(random.uniform(10.0, 30.0), 1)
     if has_h:
         measurement["h"] = round(random.uniform(10.0, 90.0))
+
+    if is_rain_sensor:
+        measurement["sc"] = True  # Measurement because of status change (flip)
+        measurement["rf"] = random.randint(0, 1_000_000)  # rain flip count
+        measurement["r"] = round(measurement["rf"] * 0.258, 1)  # total rainfall in mm
+        measurement["rr"] = 0.258  # amount of water per flip in mm
 
     result =  {
             "deviceid": device_id,
