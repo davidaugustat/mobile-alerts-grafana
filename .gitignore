@@ -10,3 +10,6 @@ exports/*
 
 # Ignore environment files
 .env
+
+# Ignore room association config file
+config/room_assoc.yml
