@@ -17,6 +17,11 @@ services:
     extends:
       file: ./docker-compose.base.yml
       service: fetcher
+  
+  room-sync:
+    extends:
+      file: ./docker-compose.base.yml
+      service: room-sync
 
   autoheal:
     extends:

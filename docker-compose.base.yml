@@ -54,6 +54,20 @@ services:
     labels:
       - "autoheal=true"
 
+  # One-shot container that syncs `room_assoc` table from YAML config at startup
+  room-sync:
+    build: ./room_sync
+    depends_on:
+      - timescaledb
+    env_file:
+      - ./.env
+    networks:
+      - local
+    volumes:
+      - ./config:/config:ro
+    restart: "no"
+    command: ["/config/room_assoc.yml"]
+
   # add a lightweight auto-healer that restarts unhealthy labeled containers
   autoheal:
     image: willfarrell/autoheal:latest
