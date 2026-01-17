@@ -36,7 +36,7 @@ CREATE INDEX IF NOT EXISTS idx_room_assoc_room ON room_assoc (room_id);
 CREATE OR REPLACE VIEW room_measurements_view AS
 SELECT
   ra.room_id,
-  m.time        AS "timestamp",
+  m.time,
   m.sensor_id,
   m.t1,
   m.t2,
