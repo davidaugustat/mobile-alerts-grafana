@@ -66,7 +66,7 @@ services:
     volumes:
       - ./config:/config:ro
     restart: "no"
-    command: ["python", "/app/sync.py", "/config/room_assoc.yml"]
+    command: ["/config/room_assoc.yml"]
 
   # add a lightweight auto-healer that restarts unhealthy labeled containers
   autoheal:

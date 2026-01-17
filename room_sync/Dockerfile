@@ -9,11 +9,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install runtime deps
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app
-COPY sync.py ./
+COPY sync.py .
 
-ENTRYPOINT ["python", "/app/sync.py"]
+ENTRYPOINT ["python", "sync.py"]
