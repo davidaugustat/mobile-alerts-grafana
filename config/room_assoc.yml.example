@@ -1,4 +1,4 @@
-# Example room association config. Copy this to `room_assoc_config/room_assoc.yml` and edit as needed.
+# Example room association config. Copy this to `config/room_assoc.yml` and edit as needed.
 #
 # Format: a top-level `associations` list of mappings with keys: sensor_id, room_id, start_date, end_date
 # Timestamps should be ISO-8601 strings (UTC recommended). 

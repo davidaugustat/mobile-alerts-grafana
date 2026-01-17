@@ -64,7 +64,7 @@ services:
     networks:
       - local
     volumes:
-      - ./room_assoc_config:/config:ro
+      - ./config:/config:ro
     restart: "no"
     command: ["python", "/app/sync.py", "/config/room_assoc.yml"]
 
