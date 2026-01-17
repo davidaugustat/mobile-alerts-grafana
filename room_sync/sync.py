@@ -130,9 +130,9 @@ def sync_to_db(entries: List[Dict[str, Optional[str]]]) -> None:
                 logging.info("No entries to insert; leaving table empty")
         conn.commit()
         logging.info("Sync completed successfully")
-    except Exception:
+    except Exception as e:
         conn.rollback()
-        logging.exception("Database sync failed")
+        logging.exception("Database sync failed. Rolled back. Exception: %s", e)
         raise
     finally:
         conn.close()
@@ -146,8 +146,13 @@ def main() -> int:
     check_env_vars()
 
     if not os.path.exists(args.config):
-        logging.error("Config file not found: %s", args.config)
-        return 2
+        logging.warning(
+            "Config file not found: %s. No room associations will be synced. "
+            "This is okay if you do not need room associations. "
+            "If you want to manage room associations, please create the room_assoc.yml file.",
+            args.config,
+        )
+        return 0
 
     try:
         entries = load_config(args.config)
