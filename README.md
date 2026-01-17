@@ -80,6 +80,44 @@ TODO
 ## Exporting / Backups
 TODO
 
+## Room Associations (Optional)
+Sometimes
+- a sensor breaks down and gets replaced by a new sensor (with different ID)
+- a sensor is moved to another room
+
+To make database queries for specific rooms less painfull in these scenarios, it is possible to define so-called *room associations*. These allow to associate a sensor ID with a room over a period of time.
+
+For this purpose copy the `config/room_assoc.yml.example` file to `config/room_assoc.yml` and create an entry for each sensor-room association.
+
+Internally, this config file is used to populate/update the `room_assoc` table in the database on container startup.
+If the `config/room_assoc.yml` file is missing, no room associations are created.
+
+### Example
+For example, let's say that a sensor with ID `0123456789AB` was in the living room and broke down on June 1st, 2025. It then got replaced by a new sensor with ID `C0FFEE123456`. The `config/room_assoc.yml` file would look like this:
+
+```yml
+associations:
+  # Old sensor in living room until June 1st, 2025
+  - sensor_id: 0123456789AB
+    room_id: living-room
+    start_date: null # from the beginning
+    end_date: 2025-06-01T00:00:00Z
+
+  # New sensor in living room since June 1st, 2025
+  - sensor_id: C0FFEE123456
+    room_id: living-room
+    start_date: 2025-06-01T00:00:01Z
+    end_date: null # until further notice
+```
+
+### How to Query Data for Specific Rooms
+You can use the `room_measurements_view` view to query measurements for specific rooms. For example, to get all temperature measurements for the living room, you can run the following SQL query:
+
+```sql
+SELECT * FROM room_measurements_view WHERE room_id = 'living-room';
+```
+The `room_measurements_view` view automatically takes into account the room associations defined in the `room_assoc` table. The result will include measurements from both the old and new sensors associated with the living room over their respective time periods.
+
 ## How to Set Up Traefik (Example)
 There are numerous ways to configure Traefik. Here is an example `docker-compose.yml` file for a Traefik instance.
 This Traefik container
