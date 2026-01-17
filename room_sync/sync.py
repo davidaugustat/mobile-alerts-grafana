@@ -8,15 +8,15 @@ associations:
     start_date: 2024-01-01T00:00:00Z    # optional, ISO timestamp or omitted/null
     end_date: 2025-06-01T00:00:00Z      # optional, ISO timestamp or null = until now
 
-If the file is valid, the script replaces the contents of `room_assoc` with the list
-from the file (simple authoritative sync).
+If the file exists and is valid, the script replaces the contents of `room_assoc` with
+the list from the file (simple authoritative sync).
 """
 
 import argparse
 import logging
 import os
+import time
 from typing import Dict, List, Optional
-
 import yaml
 import psycopg2
 from psycopg2.extras import execute_values
@@ -69,8 +69,6 @@ def load_config(path: str) -> List[Dict[str, Optional[str]]]:
 
     return out
 
-
-import time
 
 def get_db_connection(retries: int = 12, wait_seconds: int = 5):
     """Try to connect to the database with retries and backoff."""
