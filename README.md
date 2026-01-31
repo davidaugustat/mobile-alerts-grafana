@@ -77,7 +77,7 @@ You can then navigate to your Grafana URL, e.g.
 There you can log in with the Grafana credentials you defined in your `.env` file.
 
 ## Configuring Grafana
-TODO
+To visualize the data in Grafana, you need to access the database using SQL queries. A collection of example SQL queries can be found in the file [grafana-query-examples.md](grafana-query-examples.md).
 
 ## Backups and CSV Export
 There are scripts to create a database backup (`pg_dump`) or export the `measurements` table to a CSV file.
