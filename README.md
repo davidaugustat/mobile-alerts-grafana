@@ -18,6 +18,7 @@ Additional features:
 - Compatible with [Traefik](https://traefik.io/traefik) for easy hosting with a domain and HTTPS
 - SQL and CSV data export
 - Healthcheck restarts the data fetcher if no new data arrives for more than 30 minutes
+- "Room associations" allow sensor IDs to be linked to specific rooms over certain time periods. This simplifies replacing or moving sensors to other rooms.
 
 ## Data Flow Diagram
 This diagram visualizes the flow of data:
@@ -57,6 +58,7 @@ Rename the `.env.example` file to `.env` and change at least the following value
 - `GF_SECURITY_ADMIN_PASSWORD`: Default password for the Grafana admin user. Use a secure random-generated password.
 
 If you want to use the "Traefik" approach, you should also set the variable `GRAFANA_DOMAIN` to the domain where you want to host the project.
+If you don't have Traefik set up on your server yet, [see below](#how-to-set-up-traefik-example) for instructions.
 
 ### 3. Spin up the Containers
 Navigate to this repository's root directory and then run either
@@ -77,8 +79,25 @@ There you can log in with the Grafana credentials you defined in your `.env` fil
 ## Configuring Grafana
 TODO
 
-## Exporting / Backups
-TODO
+## Backups and CSV Export
+There are scripts to create a database backup (`pg_dump`) or export the `measurements` table to a CSV file.
+### Backups
+Run from the root of this repository:
+```bash
+$ bash backup.sh docker-compose.ports.yml
+```
+If you use the Traefik variant, run `bash backup.sh docker-compose.traefik.yml` instead. It is necessary to pass the used Docker Compose file as an argument, because the script internally acesses the `timescaledb` Docker container.
+
+After the command completes, you can find a file `sensor_data-20260131-184209.sql` in the `backups` directory. This is your backup.
+
+### CSV Export
+Similarly to the backup, run the following command from the root of this repository:
+```bash
+$ bash export_csv.sh docker-compose.ports.yml
+```
+or `bash export_csv.sh docker-compose.traefik.yml` respectively.
+
+You can then find a file like `measurements-20260131-184638.csv` in the `exports` directory.
 
 ## Room Associations (Optional)
 Sometimes:
