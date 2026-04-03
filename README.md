@@ -99,6 +99,29 @@ or `bash export_csv.sh docker-compose.traefik.yml` respectively.
 
 You can then find a file like `measurements-20260131-184638.csv` in the `exports` directory.
 
+### Cummulative Backup
+The `full_backup.sh` script can be used to create a ZIP archive containing
+
+- the latest SQL backup
+- the latest CSV export
+-  the `config/room_assoc.yml` file (if it exists).
+
+This can be useful for creating a cummulative backup of all relevant data. Run the following command from the root of this repository:
+```bash
+$ bash full_backup.sh docker-compose.ports.yml
+```
+or `bash full_backup.sh docker-compose.traefik.yml` respectively.
+
+The resulting ZIP archive will be stored in the `full_backup` directory.
+
+### Backing Up Grafana Dashboards
+Grafana Dashboards can be backed up manually in the browser. On a Grafana dashboard click 
+
+Export > Export as code > Download file
+
+as explained in [this article](https://grafana.com/docs/grafana/latest/visualizations/dashboards/share-dashboards-panels/#export-a-dashboard-as-code).
+You can use the downloaded JSON file later to import the dashboard into a new Grafana instance.
+
 ## Room Associations (Optional)
 Sometimes:
 - a sensor breaks down and gets replaced by a new sensor (with a different ID)
